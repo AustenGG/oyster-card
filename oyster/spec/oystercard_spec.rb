@@ -5,6 +5,9 @@ describe Oystercard do
     expect(subject.balance).to eq(0)
   end
   
+   let(:entry_station) { double :station }
+   let(:exit_station) { double :station }
+  
   describe '#top_up' do
     it { is_expected.to respond_to(:top_up).with(1).argument }
       
@@ -27,7 +30,7 @@ describe Oystercard do
     end
     
     it 'will deduct money from card after touch in' do
-        expect{ subject.touch_out }.to change{ subject.balance }.by(-Oystercard::MINIMUM_CHARGE)
+        expect{ subject.touch_out(exit_station) }.to change{ subject.balance }.by(-Oystercard::MINIMUM_CHARGE)
     end
   end
   
@@ -50,7 +53,7 @@ describe Oystercard do
       it "can touch out" do
         subject.top_up(5)
         subject.touch_in(station)
-        subject.touch_out
+        subject.touch_out(exit_station)
         expect(subject).not_to be_in_journey
       end
         
@@ -62,7 +65,44 @@ describe Oystercard do
           expect(subject.entry_station).to eq station
         end
         
-        
-    end
+       
+        it 'stores exit station' do
+          subject.top_up(5)
+          subject.touch_in(entry_station)
+          subject.touch_out(exit_station)
+          expect(subject.exit_station).to eq exit_station
+        end
+      end
+      
+         describe '#journeys' do
+          it 'has an empty list of journeys by default' do
+            expect(subject.journeys).to be_empty
+          end
+         
+      let(:journey){ {entry_station: entry_station, exit_station: exit_station} }
+
+         it 'stores a journey' do
+         subject.top_up(5)
+         subject.touch_in(entry_station)
+         subject.touch_out(exit_station)
+         expect(subject.journeys).to include journey
+          
+        end
+      end
+    
+  end
+end
+
+require 'station'
+describe Station do
+
+  it 'knows its name' do   
+    subject.name('Old Street')
+    expect(subject.name).to eq("Old Street")              
+  end                                                   
+
+  it 'knows its zone' do
+    subject.zone(1)
+    expect(subject.zone).to eq(1)                                 
   end
 end
