@@ -93,16 +93,3 @@ describe Oystercard do
   end
 end
 
-require 'station'
-describe Station do
-
-  it 'knows its name' do   
-    subject.name('Old Street')
-    expect(subject.name).to eq("Old Street")              
-  end                                                   
-
-  it 'knows its zone' do
-    subject.zone(1)
-    expect(subject.zone).to eq(1)                                 
-  end
-end
